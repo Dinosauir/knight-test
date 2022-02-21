@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Modules\VirtueModule\Virtue\Services;
+
+use App\Modules\VirtueModule\Virtue\Virtue;
+use App\Services\BaseService;
+use Illuminate\Database\Eloquent\Model;
+
+class VirtueService extends BaseService
+{
+    public function getRelationships(): array
+    {
+        return [];
+    }
+
+    public function getModel(?int $id = null): Model
+    {
+        if ($id) {
+            return Virtue::find($id);
+        }
+
+        return new Virtue();
+    }
+}

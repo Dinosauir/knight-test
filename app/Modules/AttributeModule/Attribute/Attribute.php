@@ -1,22 +1,23 @@
 <?php
 
-namespace App\Modules\KnightModule\Virtue;
+namespace App\Modules\AttributeModule\Attribute;
 
-use App\Modules\KnightModule\Virtue\Traits\HasRelations;
+use App\Modules\AttributeModule\Attribute\Traits\HasRelations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property-read int $id
- * @property int $knight_id
- * @property int $value
  * @property string $name
+ * @property int $value
  *
  * @mixin Builder
  */
-class KnightVirtue extends Model
+class Attribute extends Model
 {
     use HasFactory;
     use HasRelations;
+
+    protected $guarded = ['id'];
 }
