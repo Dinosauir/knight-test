@@ -2,13 +2,10 @@
 
 namespace App\Modules\KnightModule\KnightVirtue\Strategies;
 
-
-use App\Modules\KnightModule\KnightVirtue\Contracts\InterfaceKnightVirtueStrategy;
-
-class JusticeStrategy implements InterfaceKnightVirtueStrategy
+class JusticeStrategy extends AgeStrategy
 {
-    public function generateVirtue(?int $age = null): int
+    public function generateVirtue(int $age): int
     {
-        return random_int(0, 100);
+        return $this->generateVirtueHigherForOlder($age);
     }
 }

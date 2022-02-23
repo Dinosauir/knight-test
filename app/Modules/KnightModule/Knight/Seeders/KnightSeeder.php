@@ -12,17 +12,11 @@ class KnightSeeder extends Seeder
     {
     }
 
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
-        Knight::truncate();
-        foreach ($this->knightService->generateKnights() as $knight) {
-            Knight::create($knight->toArray());
+        Knight::query()->delete();
+        foreach ($this->knightService->generateKnightsData() as $knight_data) {
+            $this->knightService->create($knight_data);
         }
-
     }
 }

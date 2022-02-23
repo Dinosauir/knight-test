@@ -15,8 +15,8 @@ class VirtueService extends BaseService
 
     public function getModel(?int $id = null): Model
     {
-        if ($id) {
-            return Virtue::find($id);
+        if ($id && $model = Virtue::find($id)) {
+            return $model;
         }
 
         return new Virtue();

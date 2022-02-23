@@ -1,6 +1,6 @@
 <?php
 
-use App\Modules\KnightModule\Knight\Controllers\KnightController;
+use App\Modules\BattleModule\BattleInvitation\Controllers\BattleInvitationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,4 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/name',[KnightController::class,'index'])->name('knight.name');
+
+Route::get('/prepareBattle/{kingdomId}', [BattleInvitationController::class, 'prepareBattle'])->name('kingdom.prepare-battle');
+Route::get('/invitation/reject/{token}', [BattleInvitationController::class, 'reject'])->name('invitation.reject');
+//Route::get('mail', function () {
+//});

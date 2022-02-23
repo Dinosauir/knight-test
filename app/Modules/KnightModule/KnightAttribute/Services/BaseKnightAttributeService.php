@@ -4,6 +4,8 @@ namespace App\Modules\KnightModule\KnightAttribute\Services;
 
 use App\Modules\KnightModule\KnightAttribute\Contracts\InterfaceKnightAttributeStrategy;
 use App\Modules\KnightModule\KnightAttribute\Contracts\InterfaceBaseKnightAttributeService;
+use App\Modules\KnightModule\KnightAttribute\Strategies\BaseStrategy;
+use Illuminate\Support\Facades\Log;
 
 abstract class BaseKnightAttributeService implements InterfaceBaseKnightAttributeService
 {
@@ -18,7 +20,13 @@ abstract class BaseKnightAttributeService implements InterfaceBaseKnightAttribut
 
     protected function getStrategyClass(string $name): InterfaceKnightAttributeStrategy
     {
-        return new ($this->resolveStrategyName($name))();
+        try {
+            return new ($this->resolveStrategyName($name))();
+        } catch (\Throwable $exception) {
+            Log::warning($exception->getMessage());
+
+            return new BaseStrategy();
+        }
     }
 
     abstract public function generateAttributes(int $age): array;

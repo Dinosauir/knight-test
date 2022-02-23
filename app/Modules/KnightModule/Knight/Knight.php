@@ -2,9 +2,10 @@
 
 namespace App\Modules\KnightModule\Knight;
 
+use App\Contracts\InterfaceCanBattle;
 use App\Modules\KnightModule\Knight\Traits\HasRelations;
+use App\Traits\CanBattle;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,19 +16,11 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin Builder
  */
-class Knight extends Model
+class Knight extends Model implements InterfaceCanBattle
 {
     use HasFactory;
     use HasRelations;
+    use CanBattle;
 
     protected $guarded = ['id'];
-
-    protected $appends = ['virtue_score'];
-
-    protected function virtueScore(): Attribute
-    {
-        return new Attribute(
-            get: fn() => (float)number_format($this->virtues()->avg('value'),2),
-        );
-    }
 }

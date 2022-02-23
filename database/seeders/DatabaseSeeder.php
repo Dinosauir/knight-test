@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Modules\AttributeModule\Attribute\Seeders\AttributeSeeder;
+use App\Modules\KnightModule\Knight\Seeders\KnightSeeder;
 use App\Modules\VirtueModule\Virtue\Seeders\VirtueSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -20,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AttributeSeeder::class,
             VirtueSeeder::class,
+            KnightSeeder::class
         ]);
     }
 }

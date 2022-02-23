@@ -2,10 +2,15 @@
 
 namespace App\Providers;
 
+use App\Modules\BattleModule\BattleInvitation\BattleInvitation;
+use App\Modules\BattleModule\BattleInvitation\BattleInvitationItem;
+use App\Modules\BattleModule\BattleInvitation\Events\PrepareBattle;
+use App\Modules\BattleModule\BattleInvitation\Listeners\SendEmailPrincessApprovalNotification;
+use App\Modules\BattleModule\BattleInvitation\Observers\BattleInvitationItemObserver;
+use App\Modules\BattleModule\BattleInvitation\Observers\BattleInvitationObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -18,6 +23,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        PrepareBattle::class => [
+            SendEmailPrincessApprovalNotification::class,
+        ],
     ];
 
     /**
@@ -27,7 +35,8 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        BattleInvitation::observe(BattleInvitationObserver::class);
+        BattleInvitationItem::observe(BattleInvitationItemObserver::class);
     }
 
     /**

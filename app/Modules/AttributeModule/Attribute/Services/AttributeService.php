@@ -15,8 +15,8 @@ class AttributeService extends BaseService
 
     public function getModel(?int $id = null): Model
     {
-        if ($id) {
-            return Attribute::find($id);
+        if ($id && $model = Attribute::find($id)) {
+            return $model;
         }
 
         return new Attribute();

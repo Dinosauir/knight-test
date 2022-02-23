@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('knight_id')->constrained('knights')->onDelete('cascade');
             $table->foreignId('attribute_id')->constrained('attributes')->onDelete('cascade');
+            $table->unique(['knight_id', 'attribute_id']);
             $table->unsignedTinyInteger('value');
         });
     }

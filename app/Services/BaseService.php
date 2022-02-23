@@ -18,7 +18,13 @@ abstract class BaseService implements InterfaceBaseService
     public function create(Data $data): Model
     {
         return DB::transaction(function () use ($data) {
-            $model = $this->getModel()->create(array_filter($data->toArray()));
+            $model_arr = $data->toArray();
+
+            if (array_key_exists('relations', $model_arr)) {
+                unset($model_arr['relations']);
+            }
+
+            $model = $this->getModel()->create(array_filter($model_arr));
 
             $this->updateRelationships($model, $data);
 
@@ -38,6 +44,9 @@ abstract class BaseService implements InterfaceBaseService
         });
     }
 
+    /**
+     * @throws \JsonException
+     */
     private function updateRelationships(Model $model, Data $data): void
     {
         if (!($data->relations)) {
@@ -49,7 +58,6 @@ abstract class BaseService implements InterfaceBaseService
             if (isset($data->relations[$relationship_name])) {
                 $relationship_type = get_class($model->$relationship_name());
                 $strategy = $this->getStrategyClass($relationship_type);
-
                 $strategy->syncRelationship($model, $relationship_name, $data->relations[$relationship_name]);
 
                 continue;

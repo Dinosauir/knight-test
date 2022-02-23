@@ -21,37 +21,10 @@ class KnightService extends BaseService
         private KnightRepository       $knightRepository,
         private KnightAttributeService $attributeService,
         private KnightVirtueService    $virtueService,
+        private KingdomService         $kingdomService
     )
     {
     }
-
-    /**
-     * @throws GuzzleException
-     * @throws JsonException
-     */
-    public function generateKnightsData(): Collection
-    {
-        $knights = collect();
-
-        foreach ($this->knightRepository->retrieveKnightNames() as $knightName) {
-            $age = random_int(20, 25);
-
-            $knights->push(
-                new KnightData(
-                    name: $knightName,
-                    age: $age,
-                    relations: [
-                        'attributes' => $this->attributeService->generateAttributes($age),
-                        'virtues' => $this->virtueService->generateVirtues($age),
-                    ],
-                    kingdom_id: Kingdom::firstOrCreate(['name' => 'Russia'])->id,
-                )
-            );
-        }
-
-        return $knights;
-    }
-
 
     public function getRelationships(): array
     {
@@ -63,10 +36,37 @@ class KnightService extends BaseService
 
     public function getModel(?int $id = null): Model
     {
-        if ($id) {
-            return Knight::find($id);
+        if ($id && $model = Knight::find($id)) {
+            return $model;
         }
 
         return new Knight();
+    }
+
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     */
+    public function generateKnightsData(int $knights_nr = null, array $age_range = [20, 25], string $kingdom_name = null): Collection
+    {
+        $knights = collect();
+
+        foreach ($this->knightRepository->retrieveKnightNames($knights_nr) as $knightName) {
+            $age = random_int($age_range[0], $age_range[1]);
+
+            $knights->push(
+                new KnightData(
+                    name: $knightName,
+                    age: $age,
+                    relations: [
+                        'attributes' => $this->attributeService->generateAttributes($age),
+                        'virtues' => $this->virtueService->generateVirtues($age),
+                    ],
+                    kingdom_id: $this->kingdomService->getKingdom($kingdom_name),
+                )
+            );
+        }
+
+        return $knights;
     }
 }

@@ -6,7 +6,7 @@ use App\Modules\KnightModule\KnightAttribute\Contracts\InterfaceKnightAttributeS
 
 class BattleStrategy implements InterfaceKnightAttributeStrategy
 {
-    public function generateAttribute(?int $age = null): int
+    public function generateAttribute(int $age): int
     {
         return random_int(0, 100);
     }
