@@ -7,63 +7,63 @@ use App\Modules\BattleModule\BattleInvitation\BattleInvitationItem;
 use App\Modules\BattleModule\BattleInvitation\Services\BattleInvitationService;
 use App\Modules\KingdomModule\Kingdom\Kingdom;
 use App\Modules\KnightModule\Knight\Knight;
-use App\Modules\KnightModule\Knight\Services\KnightService;
-use Illuminate\Http\Response;
+use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class BattleInvitationController extends Controller
 {
-    public function __construct(
-        private BattleInvitationService $battleInvitationService,
-        private KnightService           $knightService
-    )
+    public function __construct(private BattleInvitationService $battleInvitationService,)
     {
     }
 
-    public function prepareBattle(int $kingdomId): Response
+    public function prepareBattle(string $kingdomName): RedirectResponse
     {
-        if (!Knight::first() && $this->generateToDatabase()->getStatusCode() === 500) {
-            return $this->generateToDatabase();
-        }
-
         try {
-            return DB::transaction(function () use ($kingdomId) {
-                $this->battleInvitationService->prepareBattle(Kingdom::find($kingdomId));
+            $kingdom = $this->checkForKnightAndKingdom($kingdomName);
 
-                return response('Successfully generated invitations for the battle!', 200);
+            return DB::transaction(function () use ($kingdom) {
+                $this->battleInvitationService->prepareBattle($kingdom);
+
+                return redirect()->route('home')->with('success', 'Successfully generated invitations for the battle!');
             });
         } catch (Throwable $exception) {
-            return response('Failed to generate battle invitations: ' . $exception->getMessage(), 500);
-        }
-
-    }
-
-    public function reject(string $token): Response
-    {
-        $item = BattleInvitationItem::pending()->where('token', $token)->first();
-
-        try {
-            $item?->reject();
-
-            return response('Knight {' . $item->knight->name . '} rejected successfully!');
-        } catch (Throwable $e) {
-            return response('Failed to reject knight: ' . $e->getMessage(), 500);
+            return redirect()->route('home')->with('error', 'Failed to generate battle invitations: ' . $exception->getMessage());
         }
     }
 
-    private function generateToDatabase(): Response
+    public function reject(string $token)
     {
         try {
-            Knight::query()->delete();
-
-            foreach ($this->knightService->generateKnightsData() as $knight_data) {
-                $this->knightService->create($knight_data);
+            /** @var BattleInvitationItem $item */
+            if (!$item = BattleInvitationItem::pending()->where('token', $token)->first()) {
+                throw new Exception('There is no invitation with that code in pending!');
             }
 
-            return response('Generated successfully!', 200);
-        } catch (Throwable $exception) {
-            return response('Failed to generate data: ' . $exception->getMessage(), 500);
+            $item->reject();
+
+            return redirect()->route('home')->with('success', 'Knight {' . $item->knight->name . '} rejected successfully! You can begin the battle now!');
+        } catch (Throwable $e) {
+            return redirect()->route('home')->with('error', $e->getMessage());
         }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function checkForKnightAndKingdom(string $kingdomName): Kingdom
+    {
+        /** @var Kingdom $kingdom * */
+        $kingdom = Kingdom::query()->where('name', $kingdomName)->first();
+
+        if (!$kingdom) {
+            throw new Exception('There is no kingdom to prepare the battle');
+        }
+        if (!Knight::first()) {
+            throw new Exception('There is no knight in the kingdom {' . $kingdom->name . '}');
+        }
+
+        return $kingdom;
     }
 }

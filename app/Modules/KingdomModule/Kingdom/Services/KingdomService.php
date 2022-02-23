@@ -27,9 +27,4 @@ class KingdomService extends BaseService
 
         return new Kingdom();
     }
-
-    public function getKingdom(?string $name = null): int
-    {
-        return $this->kingdomRepository->getKingdom($name);
-    }
 }

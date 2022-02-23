@@ -7,6 +7,7 @@ use App\Modules\BattleModule\BattleInvitation\Data\BattleInvitationData;
 use App\Modules\BattleModule\BattleInvitation\Events\PrepareBattle;
 use App\Modules\KingdomModule\Kingdom\Kingdom;
 use App\Services\BaseService;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 
 class BattleInvitationService extends BaseService
@@ -27,8 +28,15 @@ class BattleInvitationService extends BaseService
         return new BattleInvitation();
     }
 
+    /**
+     * @throws Exception
+     */
     public function prepareBattle(Kingdom $kingdom): void
     {
+        if (!$kingdom->princess) {
+            throw new Exception('Kingdom ' . $kingdom->name . ' has no princess');
+        }
+
         $knights = $kingdom->knights()->take(3)->get()->sortByDesc('virtue_score');
 
         event(new PrepareBattle(

@@ -18,14 +18,14 @@ class KnightRepository
      * @throws GuzzleException
      * @throws JsonException
      */
-    public function retrieveKnightNames(int $knights_nr = 5): array|JsonResponse
+    public function retrieveKnightNames(?int $knights_nr): array|JsonResponse
     {
         $knight_names = [];
 
         foreach ($this->apiService->retrieveNames()->getData()->data as $key => $knight) {
             $knight_names[] = $knight->name;
 
-            if ($key === $knights_nr) {
+            if ($key === ($knights_nr ?? 5)) {
                 break;
             }
         }

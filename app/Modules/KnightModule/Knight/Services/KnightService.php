@@ -3,6 +3,7 @@
 namespace App\Modules\KnightModule\Knight\Services;
 
 use App\Modules\KingdomModule\Kingdom\Kingdom;
+use App\Modules\KingdomModule\Kingdom\Repositories\KingdomRepository;
 use App\Modules\KingdomModule\Kingdom\Services\KingdomService;
 use App\Modules\KnightModule\Knight\Data\KnightData;
 use App\Modules\KnightModule\Knight\Knight;
@@ -10,6 +11,7 @@ use App\Modules\KnightModule\Knight\Repositories\KnightRepository;
 use App\Modules\KnightModule\KnightAttribute\Services\KnightAttributeService;
 use App\Modules\KnightModule\KnightVirtue\Services\KnightVirtueService;
 use App\Services\BaseService;
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -46,8 +48,9 @@ class KnightService extends BaseService
     /**
      * @throws GuzzleException
      * @throws JsonException
+     * @throws Exception
      */
-    public function generateKnightsData(int $knights_nr = null, array $age_range = [20, 25], string $kingdom_name = null): Collection
+    public function generateKnightsData(Kingdom $kingdom, int $knights_nr = null, array $age_range = [20, 25]): Collection
     {
         $knights = collect();
 
@@ -62,7 +65,7 @@ class KnightService extends BaseService
                         'attributes' => $this->attributeService->generateAttributes($age),
                         'virtues' => $this->virtueService->generateVirtues($age),
                     ],
-                    kingdom_id: $this->kingdomService->getKingdom($kingdom_name),
+                    kingdom_id: $kingdom->id,
                 )
             );
         }

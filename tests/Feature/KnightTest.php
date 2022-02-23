@@ -2,21 +2,31 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Modules\KnightModule\Knight\Services\KnightService;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class KnightTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function test_example()
-    {
-        $response = $this->get('/');
+    private KnightService $knightService;
 
-        $response->assertStatus(200);
+    public function setUp(): void {
+        parent::setUp();
+
+        $this->knightService = $this->app->make(KnightService::class);
+    }
+
+    public function test_create_knights(): void
+    {
+        DB::beginTransaction();
+
+        $knights = collect();
+        foreach ($this->knightService->generateKnightsData(10,[25,30],'Taiwan') as $knightData) {
+            $knights->push($this->knightService->create($knightData));
+        }
+
+        $this->assertSame($knights->count(), 10);
+
+        DB::rollBack();
     }
 }

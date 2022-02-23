@@ -15,7 +15,7 @@ abstract class AgeStrategy implements InterfaceKnightAttributeStrategy
         if (!$age) {
             $age = 20;
         }
-
+//        $age = 30;
         for ($i = 20; $i <= $age; $i++) {
             if ($i === $age) {
                 return random_int(floor($min), floor($min + $part));
@@ -36,7 +36,7 @@ abstract class AgeStrategy implements InterfaceKnightAttributeStrategy
 
         for ($i = 20; $i <= $age; $i++) {
             if ($i === $age) {
-                return random_int(max(floor($min), 0), floor($min + $part));
+                return random_int(max(floor($min), 0), max(floor($min + $part), 0));
             }
 
             $min -= $part;

@@ -16,7 +16,9 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('kingdom_id')->constrained('kingdoms');
             $table->string('name');
-            $table->string('email');
+            $table->string('email')->unique();
+
+            $table->unique(['email', 'kingdom_id']);
             $table->timestamps();
         });
     }

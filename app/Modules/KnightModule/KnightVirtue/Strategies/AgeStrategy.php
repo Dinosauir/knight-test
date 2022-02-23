@@ -36,7 +36,7 @@ abstract class AgeStrategy implements InterfaceKnightVirtueStrategy
 
         for ($i = 20; $i <= $age; $i++) {
             if ($i === $age) {
-                return random_int(max(floor($min), 0), floor($min + $part));
+                return random_int(max(floor($min), 0), max(floor($min + $part), 0));
             }
 
             $min -= $part;

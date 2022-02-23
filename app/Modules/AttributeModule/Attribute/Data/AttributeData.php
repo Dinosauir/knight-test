@@ -8,8 +8,7 @@ class AttributeData extends Data
 {
     public function __construct(
         public string $name,
-        public ?int   $value = null,
-        public array $relations = []
+        public array  $relations = []
     )
     {
 
