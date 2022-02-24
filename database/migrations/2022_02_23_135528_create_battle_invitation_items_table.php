@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('battle_invitation_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('battle_invitation_id')->constrained('battle_invitations')->onDelete('cascade');
-            $table->foreignId('knight_id')->constrained('knights')->onDelete('cascade');
+            $table->foreignId('battleable_id')->constrained('battleables')->onDelete('cascade');
             $table->string('token')->nullable();
             $table->enum('status', ['pending', 'rejected', 'accepted']);
             $table->timestamps();

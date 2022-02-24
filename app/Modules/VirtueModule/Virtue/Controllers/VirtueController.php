@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Modules\VirtueModule\Virtue\Data\VirtueData;
 use App\Modules\VirtueModule\Virtue\Services\VirtueService;
 use App\Modules\VirtueModule\Virtue\Virtue;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -17,12 +19,12 @@ class VirtueController extends Controller
     {
     }
 
-    public function create()
+    public function create(): View
     {
         return view('pages.virtue.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         try {
             $request->validate([

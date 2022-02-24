@@ -4,6 +4,7 @@ namespace App\Modules\KnightModule\KnightVirtue\Services;
 
 use App\Modules\VirtueModule\Virtue\Virtue;
 use Exception;
+use RuntimeException;
 
 class KnightVirtueService extends BaseKnightVirtueService
 {
@@ -13,7 +14,7 @@ class KnightVirtueService extends BaseKnightVirtueService
     public function generateVirtues(int $age): array
     {
         if (!Virtue::first()) {
-            throw new Exception('There are no virtues created!');
+            throw new RuntimeException('There are no virtues created!');
         }
 
         return Virtue::all()->mapWithKeys(function ($item) use ($age) {

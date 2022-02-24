@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Modules\KingdomModule\Kingdom\Kingdom;
 use App\Modules\KnightModule\Knight\Knight;
 use App\Modules\KnightModule\Knight\Services\KnightService;
-use Exception;
-use Illuminate\Database\Eloquent\Collection;
+use RuntimeException;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class KnightController extends Controller
@@ -21,16 +21,21 @@ class KnightController extends Controller
     {
         try {
             $kingdom = $this->findOrFailKingdom($kingdom_name);
-
-            Knight::query()->delete();
+            Knight::query()->get()->each(function ($knight) {
+                $knight->delete();
+            });
 
             foreach ($this->knightService->generateKnightsData($kingdom) as $knight_data) {
                 $this->knightService->create($knight_data);
             }
 
             return redirect()->route('home')->with('success', 'Successfully generated knights for kingdom {' . $kingdom->name . '} !');
+        } catch (RuntimeException $e) {
+            return redirect()->route('home')->with('error', 'Failed to generate knights: ' . $e->getMessage());
         } catch (Throwable $exception) {
-            return redirect()->route('home')->with('error', 'Failed to generate knights: ' . $exception->getMessage());
+            Log::warning('KnightController\generateToDatabase : ' . $exception->getMessage());
+
+            return redirect()->route('home')->with('error', 'Failed to generate knights, check logs!');
         }
     }
 
@@ -42,18 +47,10 @@ class KnightController extends Controller
         /** @var Kingdom|null $kingdom */
         $kingdom = Kingdom::query()->where('name', $kingdom_name)->first();
         if (!$kingdom) {
-            throw new Exception('There is not kingdom with name {' . $kingdom_name . '}');
+            throw new RuntimeException('There is not kingdom with name {' . $kingdom_name . '}');
         }
 
         return $kingdom;
-    }
-
-    public function battle(Collection $knights)
-    {
-        /** @var Knight $attacker */
-        $attacker = $knights->sortByDesc('virtue_score')->first();
-        /** @var Knight $defender */
-        $defender = $knights->sortByDesc('virtue_score')->last();
     }
 }
 

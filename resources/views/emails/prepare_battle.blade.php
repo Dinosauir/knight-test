@@ -9,13 +9,13 @@
 
     </div>
 
-    @foreach($invitations as $invitation)
+    @foreach($invitation_items as $invitation_item)
         <div class="row">
             <div class="col-md-9">
-                <p>{{ $invitation->knight->name }} virtue score: {{ $invitation->knight->virtue_score }} </p>
+                <p>{{ $invitation_item->battleable->finalModel->name }} virtue score: {{ $invitation_item->battleable->finalModel->virtue_score }} </p>
             </div>
             <div class="col-md-3">
-                <a href="{{ route('invitation.reject',$invitation->token) }}">
+                <a href="{{ route('invitation.reject',$invitation_item->token) }}">
                     <button class="btn btn-primary"> Reject</button>
                 </a>
             </div>

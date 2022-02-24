@@ -23,6 +23,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+Route::get('/test', [KnightController::class, 'test']);
+
+Route::get('/viewBattles', [BattleController::class, 'index'])->name('battle.index');
+Route::get('/viewBattles/{id}', [BattleController::class, 'show'])->name('battle.show');
 
 Route::group(['prefix' => 'generate'], function () {
     Route::get('/knights/{kingdomName}', [KnightController::class, 'generateToDatabase'])->name('generate.knights');
@@ -40,8 +44,7 @@ Route::group(['prefix' => 'generate'], function () {
     Route::post('/virtues/store', [VirtueController::class, 'store'])->name('generate.virtue.store');
 });
 
-Route::get('/viewBattles', [BattleController::class, 'index'])->name('battle.index');
-Route::get('/viewBattles/{id}', [BattleController::class, 'show'])->name('battle.show');
-Route::get('/battleResult/{id}', [BattleController::class, 'battle'])->name('battle.result');
+
+Route::get('/battleResult/{id}', [BattleController::class, 'battle'])->name('battle.battle');
 Route::get('/prepareBattle/{kingdomName}', [BattleInvitationController::class, 'prepareBattle'])->name('kingdom.prepare-battle');
 Route::get('/invitation/reject/{token}', [BattleInvitationController::class, 'reject'])->name('invitation.reject');

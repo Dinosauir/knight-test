@@ -12,13 +12,11 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('princesses', function (Blueprint $table) {
+        Schema::create('battleables', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('battleable_id');
+            $table->string('battleable_type');
             $table->foreignId('kingdom_id')->constrained('kingdoms')->onDelete('cascade');
-            $table->string('name');
-            $table->string('email')->unique();
-
-            $table->unique(['email', 'kingdom_id']);
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('princesses');
+        Schema::dropIfExists('battleables');
     }
 };

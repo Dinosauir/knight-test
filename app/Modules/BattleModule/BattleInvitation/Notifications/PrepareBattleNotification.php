@@ -11,7 +11,7 @@ class PrepareBattleNotification extends Notification
 {
     use Queueable;
 
-    public function __construct(private Collection $invitations)
+    public function __construct(private Collection $invitation_items)
     {
     }
 
@@ -23,6 +23,6 @@ class PrepareBattleNotification extends Notification
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->view('emails.prepare_battle', ['invitations' => $this->invitations, 'princess' => $notifiable]);
+            ->view('emails.prepare_battle', ['invitation_items' => $this->invitation_items, 'princess' => $notifiable]);
     }
 }

@@ -4,10 +4,15 @@ namespace App\Traits;
 
 use App\Contracts\InterfaceCanBattle;
 use App\Modules\AttributeModule\Attribute\Attribute;
+use App\Modules\BattleableModule\Battleable\Battleable;
+use App\Modules\BattleModule\Battle\BattleLog;
 use App\Modules\VirtueModule\Virtue\Virtue;
 use Illuminate\Database\Eloquent\Casts\Attribute as Attr;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
  * @property float $health
@@ -17,62 +22,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property float $virtue_score
  * @property Collection $attributes
  * @property Collection $virtues
+ * @property Collection $battles
  */
 trait CanBattle
 {
-    protected function initializeCanBattle(): void
-    {
-        $this->appends[] = 'virtue_score';
-        $this->appends[] = 'health';
-        $this->appends[] = 'strength';
-        $this->appends[] = 'battle';
-        $this->appends[] = 'defense';
-    }
+    use CanBattleAttributes;
+    use CanBattleRelations;
 
-    public function virtueScore(): Attr
+    public static function boot()
     {
-        return new Attr(
-            get: fn() => (float)number_format($this->virtues()->avg('value'), 2),
-        );
-    }
-
-    public function strength(): Attr
-    {
-        return new Attr(
-            get: fn() => $this->attributes()->where('name', 'strength')->first()->pivot->value
-        );
-    }
-
-    public function battle(): Attr
-    {
-        return new Attr(
-            get: fn() => $this->attributes()->where('name', 'battle')->first()->pivot->value
-        );
-    }
-
-    public function defense(): Attr
-    {
-        return new Attr(
-            get: fn() => $this->attributes()->where('name', 'defense')->first()->pivot->value
-        );
-    }
-
-    public function health(): Attr
-    {
-        return new Attr(
-            get: fn(float $value = null) => $value ?? 100.0,
-            set: fn(float $value) => $value,
-        );
-    }
-
-    public function virtues(): BelongsToMany
-    {
-        return $this->belongsToMany(Virtue::class)->withPivot('value');
-    }
-
-    public function attributes(): BelongsToMany
-    {
-        return $this->belongsToMany(Attribute::class)->withPivot('value');
+        parent::boot();
+        self::deleting(function ($model) {
+            $model->battleable()->delete();
+        });
     }
 
     public function attack(InterfaceCanBattle &$defender): float

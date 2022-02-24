@@ -9,8 +9,7 @@ class KnightData extends Data
     public function __construct(
         public string $name,
         public int    $age,
-        public array  $relations,
-        public int    $kingdom_id
+        public array  $relations
     )
     {
     }

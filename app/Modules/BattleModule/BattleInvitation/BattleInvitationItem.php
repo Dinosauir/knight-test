@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property-read int $id
  * @property string $status
- * @property int $knight_id
+ * @property int $battleable_id
  * @property string $token
  *
  * @mixin Builder

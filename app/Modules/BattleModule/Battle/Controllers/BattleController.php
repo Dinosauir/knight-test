@@ -2,51 +2,52 @@
 
 namespace App\Modules\BattleModule\Battle\Controllers;
 
+use App\Modules\BattleModule\Battle\Services\BattleService;
 use App\Modules\BattleModule\BattleInvitation\BattleInvitation;
-use App\Modules\KnightModule\Knight\Knight;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class BattleController
 {
-    public function index()
+    public function __construct(private BattleService $battleService)
+    {
+    }
+
+    public function index(): View
     {
         $battles = BattleInvitation::paginate(20);
 
         return view('pages.battle.index', compact('battles'));
     }
 
-    public function show(int $id)
+    public function show(int $id): View|RedirectResponse
     {
-        $battleInvitation = BattleInvitation::find($id);
-        $knights = $battleInvitation->children()->accepted()->get()->map(fn($child) => $child->knight)->sortByDesc('virtue_score');
-        return view('pages.battle.show', compact('battleInvitation', 'knights'));
+        if ((!$battleInvitation = BattleInvitation::find($id)) || $battleInvitation->status !== BattleInvitation::STATUSES['ready']) {
+            return redirect()->route('battle.index')->with('error', 'There is no knight rejected or no battle with that id!');
+        }
+
+        $battleables = $battleInvitation->children()
+            ->accepted()
+            ->get()
+            ->map(fn($child) => $child->battleable->finalModel)
+            ->sortByDesc('virtue_score');
+
+        return view('pages.battle.show', compact('battleInvitation', 'battleables'));
     }
 
-    public function battle(int $id)
+    public function battle(int $id): Response
     {
-        /**
-         *  Clem 1 dmg 30 aparare 5
-         *  Kim 2 dmg 15 aparare 10
-         *
-         *  clem ->
-         */
-        //#TODO create battles -> battle_logs from invitation
-        /**
-         * battle_invitation_id
-         * logs: knight_id action_type action_value
-         *        1         attack      30
-         *        2         survive     70
-         *        2         attack      50
-         *       1          survive     50
-         *       1           attack     50
-         *       2          death       20
-         */
-        $battleInvitation = BattleInvitation::find($id);
-        $knights = $battleInvitation->children()->accepted()->get()->map(fn($child) => $child->knight)->sortByDesc('virtue_score');
+        try {
+            $battle = $this->battleService->findOrCreateBattle(BattleInvitation::findOrFail($id));
 
-        /** @var Knight $attacker */
-        $attacker = $knights->first();
-        /** @var Knight $attacker */
-        $defender = $knights->last();
-        dd($attacker->attack($defender));
+            return response(['data' => $battle->logs], 200);
+        } catch (\Throwable $e) {
+            throw $e;
+            Log::warning('BattleController\battle :' . $e->getMessage());
+
+            return response(['error' => 'Cannot create battle, check logs!'], 500);
+        }
     }
 }

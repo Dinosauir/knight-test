@@ -23,4 +23,7 @@ class Knight extends Model implements InterfaceCanBattle
     use CanBattle;
 
     protected $guarded = ['id'];
+
+
+
 }

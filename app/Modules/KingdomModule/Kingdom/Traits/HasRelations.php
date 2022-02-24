@@ -2,7 +2,7 @@
 
 namespace App\Modules\KingdomModule\Kingdom\Traits;
 
-use App\Modules\KnightModule\Knight\Knight;
+use App\Modules\BattleableModule\Battleable\Battleable;
 use App\Modules\PrincessModule\Princess\Princess;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,8 +19,8 @@ trait HasRelations
         return $this->hasOne(Princess::class);
     }
 
-    public function knights(): HasMany
+    public function battleables(): HasMany
     {
-        return $this->hasMany(Knight::class);
+        return $this->hasMany(Battleable::class);
     }
 }

@@ -3,8 +3,6 @@
 namespace App\Modules\KnightModule\Knight\Services;
 
 use App\Modules\KingdomModule\Kingdom\Kingdom;
-use App\Modules\KingdomModule\Kingdom\Repositories\KingdomRepository;
-use App\Modules\KingdomModule\Kingdom\Services\KingdomService;
 use App\Modules\KnightModule\Knight\Data\KnightData;
 use App\Modules\KnightModule\Knight\Knight;
 use App\Modules\KnightModule\Knight\Repositories\KnightRepository;
@@ -22,8 +20,7 @@ class KnightService extends BaseService
     public function __construct(
         private KnightRepository       $knightRepository,
         private KnightAttributeService $attributeService,
-        private KnightVirtueService    $virtueService,
-        private KingdomService         $kingdomService
+        private KnightVirtueService    $virtueService
     )
     {
     }
@@ -32,7 +29,8 @@ class KnightService extends BaseService
     {
         return [
             'virtues',
-            'attributes'
+            'attributes',
+            'battleable'
         ];
     }
 
@@ -64,8 +62,8 @@ class KnightService extends BaseService
                     relations: [
                         'attributes' => $this->attributeService->generateAttributes($age),
                         'virtues' => $this->virtueService->generateVirtues($age),
-                    ],
-                    kingdom_id: $kingdom->id,
+                        'battleable' => ['kingdom_id' => $kingdom->id]
+                    ]
                 )
             );
         }

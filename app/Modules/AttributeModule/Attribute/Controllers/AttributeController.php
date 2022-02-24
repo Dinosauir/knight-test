@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Modules\AttributeModule\Attribute\Attribute;
 use App\Modules\AttributeModule\Attribute\Data\AttributeData;
 use App\Modules\AttributeModule\Attribute\Services\AttributeService;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -16,12 +18,12 @@ class AttributeController extends Controller
     {
     }
 
-    public function create()
+    public function create(): View
     {
         return view('pages.attribute.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         try {
             $request->validate([

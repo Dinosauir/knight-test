@@ -28,24 +28,16 @@ class BattleInvitationService extends BaseService
         return new BattleInvitation();
     }
 
-    /**
-     * @throws Exception
-     */
     public function prepareBattle(Kingdom $kingdom): void
     {
-        if (!$kingdom->princess) {
-            throw new Exception('Kingdom ' . $kingdom->name . ' has no princess');
-        }
+        $battleables = $kingdom->battleables()->take(3)->get();
 
-        $knights = $kingdom->knights()->take(3)->get()->sortByDesc('virtue_score');
+        $invitation = $this->create(new BattleInvitationData(
+            princess_id: $kingdom->princess->id,
+            relations: [
+                'children' => $battleables->map(fn($battleable) => ['battleable_id' => $battleable->id])->toArray(),
+            ]));
 
-        event(new PrepareBattle(
-                $this->create(new BattleInvitationData(
-                    princess_id: $kingdom->princess->id,
-                    relations: [
-                        'children' => $knights->map(fn($knight) => ['knight_id' => $knight->id])->toArray(),
-                    ]
-                )))
-        );
+        event(new PrepareBattle($invitation));
     }
 }

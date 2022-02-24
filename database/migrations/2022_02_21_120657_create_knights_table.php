@@ -16,7 +16,6 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->unsignedTinyInteger('age');
-            $table->foreignId('kingdom_id')->constrained('kingdoms');
             $table->timestamps();
         });
     }

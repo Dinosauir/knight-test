@@ -2,13 +2,13 @@
 
 namespace App\Modules\BattleModule\BattleInvitation\Traits;
 
+use App\Modules\BattleableModule\Battleable\Battleable;
 use App\Modules\BattleModule\BattleInvitation\BattleInvitation;
-use App\Modules\KnightModule\Knight\Knight;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property BattleInvitation $parent
- * @property Knight $knight
+ * @property Battleable $battleable
  */
 trait ItemHasRelations
 {
@@ -17,8 +17,8 @@ trait ItemHasRelations
         return $this->belongsTo(BattleInvitation::class, 'battle_invitation_id', 'id');
     }
 
-    public function knight(): BelongsTo
+    public function battleable(): BelongsTo
     {
-        return $this->belongsTo(Knight::class, 'knight_id', 'id');
+        return $this->belongsTo(Battleable::class, 'battleable_id', 'id');
     }
 }

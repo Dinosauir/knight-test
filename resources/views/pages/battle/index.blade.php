@@ -37,7 +37,7 @@
                         class="{{ $battle->status ===  \App\Modules\BattleModule\BattleInvitation\BattleInvitation::STATUSES['ready'] ? 'green' : 'red'}}">{{ $battle->status }}</span>
                 </td>
                 <td>
-                    <a href="{{ route('battle.show',['id' => $id]) }}">
+                    <a href="{{ route('battle.show',['id' => $battle->id]) }}">
                         <button class="btn btn-primary">Begin fight</button>
                     </a>
                 </td>
