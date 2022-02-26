@@ -3,6 +3,7 @@
 use App\Modules\AttributeModule\Attribute\Controllers\AttributeController;
 use App\Modules\BattleModule\Battle\Controllers\BattleController;
 use App\Modules\BattleModule\BattleInvitation\Controllers\BattleInvitationController;
+use App\Modules\BattleModule\BattleInvitation\Notifications\PrepareBattleNotification;
 use App\Modules\KingdomModule\Kingdom\Controllers\KingdomController;
 use App\Modules\KnightModule\Knight\Controllers\KnightController;
 use App\Modules\PrincessModule\Princess\Controllers\PrincessController;
@@ -23,7 +24,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
-Route::get('/test', [KnightController::class, 'test']);
+
+Route::get('mail', function () {
+    $invitation = \App\Modules\BattleModule\BattleInvitation\BattleInvitation::first();
+
+    return (new PrepareBattleNotification($invitation->children))
+        ->toMail(App\Modules\PrincessModule\Princess\Princess::first());
+});
 
 Route::get('/viewBattles', [BattleController::class, 'index'])->name('battle.index');
 Route::get('/viewBattles/{id}', [BattleController::class, 'show'])->name('battle.show');

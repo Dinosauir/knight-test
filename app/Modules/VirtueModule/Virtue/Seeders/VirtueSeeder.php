@@ -4,6 +4,7 @@ namespace App\Modules\VirtueModule\Virtue\Seeders;
 
 use App\Modules\VirtueModule\Virtue\Data\VirtueData;
 use App\Modules\VirtueModule\Virtue\Services\VirtueService;
+use App\Modules\VirtueModule\Virtue\Virtue;
 use Illuminate\Database\Seeder;
 
 class VirtueSeeder extends Seeder
@@ -14,6 +15,8 @@ class VirtueSeeder extends Seeder
 
     public function run()
     {
+        Virtue::query()->delete();
+
         $virtues = [
             ['name' => 'courage'],
             ['name' => 'justice'],

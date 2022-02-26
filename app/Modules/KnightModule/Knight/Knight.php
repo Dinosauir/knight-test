@@ -2,9 +2,8 @@
 
 namespace App\Modules\KnightModule\Knight;
 
-use App\Contracts\InterfaceCanBattle;
-use App\Modules\KnightModule\Knight\Traits\HasRelations;
-use App\Traits\CanBattle;
+use App\Modules\BattleModule\Battleable\Contracts\InterfaceCanBattle;
+use App\Modules\BattleModule\Battleable\Traits\CanBattle;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,11 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 class Knight extends Model implements InterfaceCanBattle
 {
     use HasFactory;
-    use HasRelations;
     use CanBattle;
 
     protected $guarded = ['id'];
-
-
-
 }

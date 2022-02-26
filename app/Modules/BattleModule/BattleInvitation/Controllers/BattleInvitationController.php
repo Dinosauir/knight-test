@@ -3,7 +3,6 @@
 namespace App\Modules\BattleModule\BattleInvitation\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\BattleModule\BattleInvitation\BattleInvitationItem;
 use App\Modules\BattleModule\BattleInvitation\Services\BattleInvitationService;
 use App\Modules\KingdomModule\Kingdom\Kingdom;
 use Exception;
@@ -15,7 +14,7 @@ use Throwable;
 
 class BattleInvitationController extends Controller
 {
-    public function __construct(private BattleInvitationService $battleInvitationService,)
+    public function __construct(private BattleInvitationService $battleInvitationService)
     {
     }
 
@@ -29,10 +28,9 @@ class BattleInvitationController extends Controller
 
                 return redirect()->route('home')->with('success', 'Successfully generated invitations for the battle!');
             });
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             return redirect()->route('home')->with('error', 'Failed to generate battle invitations: ' . $e->getMessage());
         } catch (Throwable $exception) {
-            throw $exception;
             Log::warning('BattleInvitationController\prepareBattlee : ' . $exception->getMessage());
 
             return redirect()->route('home')->with('error', 'Cannot prepare battle, check logs!');
@@ -42,14 +40,11 @@ class BattleInvitationController extends Controller
     public function reject(string $token): RedirectResponse
     {
         try {
-            /** @var BattleInvitationItem $item */
-            if (!$item = BattleInvitationItem::pending()->where('token', $token)->first()) {
-                throw new RuntimeException('There is no invitation with that code in pending!');
-            }
+            return DB::transaction(function () use ($token) {
+                $item = $this->battleInvitationService->reject($token);
 
-            $item->reject();
-
-            return redirect()->route('home')->with('success', 'Battleable {' . $item->battleable->finalModel->name . '} rejected successfully! You can begin the battle now!');
+                return redirect()->route('home')->with('success', 'Battleable {' . $item->battleable->finalModel->name . '} rejected successfully! You can begin the battle now!');
+            });
         } catch (RuntimeException $e) {
             return redirect()->route('home')->with('error', $e->getMessage());
         } catch (Throwable $e) {

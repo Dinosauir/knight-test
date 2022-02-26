@@ -3,11 +3,11 @@
 namespace App\Modules\BattleModule\BattleInvitation\Services;
 
 use App\Modules\BattleModule\BattleInvitation\BattleInvitation;
+use App\Modules\BattleModule\BattleInvitation\BattleInvitationItem;
 use App\Modules\BattleModule\BattleInvitation\Data\BattleInvitationData;
 use App\Modules\BattleModule\BattleInvitation\Events\PrepareBattle;
 use App\Modules\KingdomModule\Kingdom\Kingdom;
 use App\Services\BaseService;
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 
 class BattleInvitationService extends BaseService
@@ -28,10 +28,11 @@ class BattleInvitationService extends BaseService
         return new BattleInvitation();
     }
 
-    public function prepareBattle(Kingdom $kingdom): void
+    public function prepareBattle(Kingdom $kingdom): BattleInvitation
     {
         $battleables = $kingdom->battleables()->take(3)->get();
 
+        /** @var BattleInvitation $invitation */
         $invitation = $this->create(new BattleInvitationData(
             princess_id: $kingdom->princess->id,
             relations: [
@@ -39,5 +40,19 @@ class BattleInvitationService extends BaseService
             ]));
 
         event(new PrepareBattle($invitation));
+
+        return $invitation;
+    }
+
+    public function reject(string $token): BattleInvitationItem
+    {
+        /** @var BattleInvitationItem $item */
+        if (!$item = BattleInvitationItem::pending()->where('token', $token)->first()) {
+            throw new \RuntimeException('There is no invitation with that code in pending!');
+        }
+
+        $item->setRejectStatus();
+
+        return $item;
     }
 }

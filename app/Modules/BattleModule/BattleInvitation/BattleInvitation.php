@@ -2,6 +2,7 @@
 
 namespace App\Modules\BattleModule\BattleInvitation;
 
+use App\Modules\BattleModule\BattleInvitation\Traits\HasActions;
 use App\Modules\BattleModule\BattleInvitation\Traits\HasRelations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,6 +19,7 @@ class BattleInvitation extends Model
 {
     use HasFactory;
     use HasRelations;
+    use HasActions;
 
     protected $guarded = ['id'];
 
@@ -25,10 +27,4 @@ class BattleInvitation extends Model
         'pending' => 'pending',
         'ready' => 'ready'
     ];
-
-    public function approve(): void
-    {
-        $this->status = self::STATUSES['ready'];
-        $this->save();
-    }
 }

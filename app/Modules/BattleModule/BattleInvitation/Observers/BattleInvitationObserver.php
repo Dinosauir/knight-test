@@ -8,6 +8,6 @@ class BattleInvitationObserver
 {
     public function creating(BattleInvitation $battleInvitation): void
     {
-        $battleInvitation->status = BattleInvitation::STATUSES['pending'];
+        $battleInvitation->setPendingStatus();
     }
 }

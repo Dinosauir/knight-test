@@ -1,18 +1,9 @@
 <?php
 
-namespace App\Traits;
+namespace App\Modules\BattleModule\Battleable\Traits;
 
-use App\Contracts\InterfaceCanBattle;
-use App\Modules\AttributeModule\Attribute\Attribute;
-use App\Modules\BattleableModule\Battleable\Battleable;
-use App\Modules\BattleModule\Battle\BattleLog;
-use App\Modules\VirtueModule\Virtue\Virtue;
-use Illuminate\Database\Eloquent\Casts\Attribute as Attr;
+use App\Modules\BattleModule\Battleable\Contracts\InterfaceCanBattle;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
  * @property float $health

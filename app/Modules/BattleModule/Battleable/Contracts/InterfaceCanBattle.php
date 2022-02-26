@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Contracts;
+namespace App\Modules\BattleModule\Battleable\Contracts;
 
 
 use Illuminate\Database\Eloquent\Casts\Attribute as Attr;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 interface InterfaceCanBattle
 {
@@ -18,9 +20,13 @@ interface InterfaceCanBattle
 
     public function strength(): Attr;
 
-    public function attack(self &$defender): float;
-
     public function virtues(): BelongsToMany;
 
     public function attributes(): BelongsToMany;
+
+    public function battleable(): MorphOne;
+
+    public function kingdom(): BelongsTo;
+
+    public function attack(self &$defender): float;
 }

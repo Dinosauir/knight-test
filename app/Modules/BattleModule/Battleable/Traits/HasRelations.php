@@ -1,24 +1,22 @@
 <?php
 
-namespace App\Modules\BattleableModule\Battleable;
+namespace App\Modules\BattleModule\Battleable\Traits;
 
 use App\Modules\BattleModule\Battle\BattleLog;
+use App\Modules\BattleModule\Battleable\Contracts\InterfaceCanBattle;
 use App\Modules\KingdomModule\Kingdom\Kingdom;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
- * @property-read int $id
- * @property int $kingdom_id
- * @property int $battleable_id
- * @property string $battleable_type
- * @property MorphTo $finalModel
+ * @property Kingdom $kingdom
+ * @property InterfaceCanBattle $finalModel
+ * @property Collection $battles
  */
-class Battleable extends Model
+trait HasRelations
 {
-    protected $guarded = ['id'];
-
     public function kingdom(): BelongsTo
     {
         return $this->belongsTo(Kingdom::class, 'kingdom_id', 'id');
@@ -29,7 +27,7 @@ class Battleable extends Model
         return $this->morphTo(null, 'battleable_type', 'battleable_id');
     }
 
-    public function battles()
+    public function battles(): HasMany
     {
         return $this->hasMany(BattleLog::class);
     }

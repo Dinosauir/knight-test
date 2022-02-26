@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace App\Modules\BattleModule\Battleable\Traits;
 
 use Illuminate\Database\Eloquent\Casts\Attribute as Attr;
 

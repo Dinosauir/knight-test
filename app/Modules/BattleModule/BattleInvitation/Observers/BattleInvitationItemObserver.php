@@ -4,14 +4,13 @@ namespace App\Modules\BattleModule\BattleInvitation\Observers;
 
 use App\Modules\BattleModule\BattleInvitation\BattleinvitationItem;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class BattleInvitationItemObserver
 {
     public function creating(BattleinvitationItem $item): void
     {
-        $item->status = BattleinvitationItem::STATUSES['pending'];
-        $item->token = Str::uuid()->toString();
+        $item->setPendingStatus();
+        $item->generateToken();
     }
 
     public function updated(BattleinvitationItem $item): void
@@ -22,10 +21,10 @@ class BattleInvitationItemObserver
                 ->get();
 
             foreach ($remaining_items as $child) {
-                $child->accept();
+                $child->setAcceptStatus();
             }
 
-            $item->parent->approve();
+            $item->parent->setReadyStatus();
         });
     }
 }

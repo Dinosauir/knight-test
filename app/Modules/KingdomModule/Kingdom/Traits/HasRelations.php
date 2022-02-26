@@ -2,7 +2,7 @@
 
 namespace App\Modules\KingdomModule\Kingdom\Traits;
 
-use App\Modules\BattleableModule\Battleable\Battleable;
+use App\Modules\BattleModule\Battleable\Battleable;
 use App\Modules\PrincessModule\Princess\Princess;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property Princess $princess
- * @property Collection $knights
+ * @property Collection $battleables
  */
 trait HasRelations
 {

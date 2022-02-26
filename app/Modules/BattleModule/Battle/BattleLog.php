@@ -3,7 +3,7 @@
 
 namespace App\Modules\BattleModule\Battle;
 
-use App\Modules\BattleableModule\Battleable\Battleable;
+use App\Modules\BattleModule\Battleable\Battleable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

@@ -20,6 +20,8 @@ class AttributeSeeder extends Seeder
      */
     public function run()
     {
+        Attribute::query()->delete();
+
         $attributes = [
             ['name' => 'strength'],
             ['name' => 'defense'],

@@ -25,7 +25,7 @@ class KnightRepository
         foreach ($this->apiService->retrieveNames()->getData()->data as $key => $knight) {
             $knight_names[] = $knight->name;
 
-            if ($key === ($knights_nr ?? 5)) {
+            if ($key === ($knights_nr ?? 4)) {
                 break;
             }
         }

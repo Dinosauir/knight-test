@@ -1,18 +1,14 @@
 @extends('layouts.base')
 
 @push('scripts')
+    <script src="{{ asset('js/battle/showBattle.js') }}"></script>
     <script defer>
-        $('#begin-battle').on('click', function (e) {
+        $("#show-log").initBattleClass();
+
+        $('#begin-battle').on('click', (e) => {
             e.preventDefault();
-
-            axios.get('{{route('battle.battle',$battleInvitation->id) }}')
-                .then((response) => {
-                    console.log(response.data.data[0]);
-                }).catch(error => {
-                console.log(error);
-            });
+            $(this).showLogs('{{route('battle.battle',$battleInvitation->id) }}');
         });
-
     </script>
 @endpush
 @section('content')
@@ -22,50 +18,34 @@
         </div>
 
         <div class="row">
-            <div class="col-md-6 text-center">
-                <h5> First Knight:</h5>
-                <p class="my-0">Name: {{ $battleables->first()->name }}</p>
-                <p class="my-0">Age: {{ $battleables->first()->age }}</p>
-                <div class="alert alert-warning">
-                    <h5>Attributes</h5>
-                    @foreach($battleables->first()->attributes as $attribute)
-                        <p class="m-0">{{ $attribute->name }}: {{ $attribute->pivot->value }}</p>
-                    @endforeach
+            @foreach($final_models as $final_model)
+                <div class="col-md-6 text-center">
+                    <h5> First Battleable Type: <span class="text-danger">{{ class_basename($final_model) }}</span></h5>
+                    <p class="my-0">Name: {{ $final_model->name }}</p>
+                    <p class="my-0">Age: {{ $final_model->age }}</p>
+                    <div class="alert alert-warning">
+                        <h5>Attributes</h5>
+                        @foreach($final_model->attributes as $attribute)
+                            <p class="m-0">{{ $attribute->name }}: {{ $attribute->pivot->value }}</p>
+                        @endforeach
+                    </div>
+                    <div class="alert alert-danger">
+                        <h5>Virtues:</h5>
+                        @foreach($final_model->virtues as $virtue)
+                            <p class="m-0">{{ $virtue->name }}: {{ $virtue->pivot->value }}</p>
+                        @endforeach
+                    </div>
                 </div>
-                <div class="alert alert-danger">
-                    <h5>Virtues:</h5>
-                    @foreach($battleables->first()->virtues as $virtue)
-                        <p class="m-0">{{ $virtue->name }}: {{ $virtue->pivot->value }}</p>
-                    @endforeach
-                </div>
-            </div>
-            <div class="col-md-6 text-center">
-                <h5> Second Knight:</h5>
-                <p class="my-0">Name: {{ $battleables->last()->name }}</p>
-                <p class="my-0">Age: {{ $battleables->last()->age }}</p>
-                <div class="alert alert-warning">
-                    <h5>Attributes</h5>
-                    @foreach($battleables->last()->attributes as $attribute)
-                        <p class="m-0">{{ $attribute->name }}: {{ $attribute->pivot->value }}</p>
-                    @endforeach
-                </div>
-                <div class="alert alert-danger">
-                    <h5>Virtues:</h5>
-                    @foreach($battleables->last()->virtues as $virtue)
-                        <p class="m-0">{{ $virtue->name }}: {{ $virtue->pivot->value }}</p>
-                    @endforeach
+            @endforeach
+
+            <div class="col-md-12 mx-auto d-none" id="show-log">
+                <div class="alert alert-info">
+                    <h4 class="py-0 my-0">
+                        {Battlelog}:
+                    </h4>
+                    <hr>
                 </div>
             </div>
-{{--            <div class="col-md-12 mx-auto">--}}
-{{--                <div class="alert alert-info">--}}
-{{--                    @foreach($battles as $battle)--}}
-{{--                        <h4 class="py-0 my-0">{Battlelog}: Knight: <span--}}
-{{--                                class="text-success">{{ $battle->battleable->name }}</span> {{ $battle->action_type }} {{ $battle->action_value }}--}}
-{{--                        </h4>--}}
-{{--                        <hr>--}}
-{{--                    @endforeach--}}
-{{--                </div>--}}
-{{--            </div>--}}
             <div class="col-md-12 py-5">
                 <button class="btn btn-warning m-auto d-flex" id="begin-battle" type="button">Begin battle!</button>
             </div>

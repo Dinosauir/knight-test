@@ -2,10 +2,11 @@
 
 namespace App\Modules\BattleModule\Battle\Services;
 
-use App\Contracts\InterfaceCanBattle;
 use App\Modules\BattleModule\Battle\Battle;
 use App\Modules\BattleModule\Battle\Data\BattleData;
+use App\Modules\BattleModule\Battle\Data\BattleLogData;
 use App\Modules\BattleModule\Battle\Repositories\BattleRepository;
+use App\Modules\BattleModule\Battleable\Contracts\InterfaceCanBattle;
 use App\Modules\BattleModule\BattleInvitation\BattleInvitation;
 use App\Services\BaseService;
 use Exception;
@@ -39,11 +40,11 @@ class BattleService extends BaseService
         }
 
         if ($battleInvitation->status !== BattleInvitation::STATUSES['ready']) {
-            throw new Exception('There are no battleables rejected! Please check your email!');
+            throw new Exception('Battle invitation is not ready!');
         }
 
         return DB::transaction(function () use ($battleInvitation) {
-            $battleables = $battleInvitation->children()
+            $battleable_final_models = $battleInvitation->children()
                 ->accepted()
                 ->get()
                 ->map(fn($item) => $item->battleable->finalModel)
@@ -52,10 +53,23 @@ class BattleService extends BaseService
             /** @var Battle $battle */
             $battle = $this->create(new BattleData(battle_invitation_id: $battleInvitation->id));
 
-            $this->generateBattleLogsData($battleables, $battle, 4);
+            $this->generateBattleLogsData($battleable_final_models, $battle, 4);
 
             return $battle;
         });
+    }
+
+    public function getApiLogs(Battle $battle): \Illuminate\Support\Collection
+    {
+        $logsData = collect([]);
+
+        $battle->logs->each(fn($log) => $logsData->push(new BattleLogData(
+            action_type: $log->action_type,
+            action_value: $log->action_value,
+            battleable_name: $log->battleable->finalModel->name
+        )));
+
+        return $logsData;
     }
 
     /**

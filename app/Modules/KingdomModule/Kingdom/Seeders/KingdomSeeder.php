@@ -4,6 +4,7 @@ namespace App\Modules\KingdomModule\Kingdom\Seeders;
 
 
 use App\Modules\KingdomModule\Kingdom\Data\KingdomData;
+use App\Modules\KingdomModule\Kingdom\Kingdom;
 use App\Modules\KingdomModule\Kingdom\Services\KingdomService;
 use Illuminate\Database\Seeder;
 
@@ -20,14 +21,8 @@ class KingdomSeeder extends Seeder
      */
     public function run()
     {
-        $attributes = [
-            ['name' => 'Russia'],
-            ['name' => 'defense'],
-            ['name' => 'battle'],
-        ];
+        Kingdom::query()->delete();
 
-        foreach ($attributes as $attribute) {
-            $this->kingdomService->create(KingdomData::from($attribute));
-        }
+        $this->kingdomService->create(KingdomData::from(['name' => 'Russia']));
     }
 }

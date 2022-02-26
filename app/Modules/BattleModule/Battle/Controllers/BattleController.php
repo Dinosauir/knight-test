@@ -2,6 +2,7 @@
 
 namespace App\Modules\BattleModule\Battle\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Modules\BattleModule\Battle\Services\BattleService;
 use App\Modules\BattleModule\BattleInvitation\BattleInvitation;
 use Illuminate\Contracts\View\View;
@@ -9,7 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
-class BattleController
+class BattleController extends Controller
 {
     public function __construct(private BattleService $battleService)
     {
@@ -25,16 +26,16 @@ class BattleController
     public function show(int $id): View|RedirectResponse
     {
         if ((!$battleInvitation = BattleInvitation::find($id)) || $battleInvitation->status !== BattleInvitation::STATUSES['ready']) {
-            return redirect()->route('battle.index')->with('error', 'There is no knight rejected or no battle with that id!');
+            return redirect()->route('battle.index')->with('error', 'There is no battleable rejected or no battle with that id!');
         }
 
-        $battleables = $battleInvitation->children()
+        $final_models = $battleInvitation->children()
             ->accepted()
             ->get()
             ->map(fn($child) => $child->battleable->finalModel)
             ->sortByDesc('virtue_score');
 
-        return view('pages.battle.show', compact('battleInvitation', 'battleables'));
+        return view('pages.battle.show', compact('battleInvitation', 'final_models'));
     }
 
     public function battle(int $id): Response
@@ -42,9 +43,8 @@ class BattleController
         try {
             $battle = $this->battleService->findOrCreateBattle(BattleInvitation::findOrFail($id));
 
-            return response(['data' => $battle->logs], 200);
+            return response(['data' => $this->battleService->getApiLogs($battle)], 200);
         } catch (\Throwable $e) {
-            throw $e;
             Log::warning('BattleController\battle :' . $e->getMessage());
 
             return response(['error' => 'Cannot create battle, check logs!'], 500);

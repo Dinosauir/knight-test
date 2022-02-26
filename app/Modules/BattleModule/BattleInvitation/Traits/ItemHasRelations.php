@@ -2,7 +2,7 @@
 
 namespace App\Modules\BattleModule\BattleInvitation\Traits;
 
-use App\Modules\BattleableModule\Battleable\Battleable;
+use App\Modules\BattleModule\Battleable\Battleable;
 use App\Modules\BattleModule\BattleInvitation\BattleInvitation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
